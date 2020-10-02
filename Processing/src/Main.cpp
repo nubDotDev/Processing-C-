@@ -9,4 +9,4 @@ int main() {
 }
 
 // TODO move glad.c
-// TODO add events with event parameter and scroll count
+// TODO fix key

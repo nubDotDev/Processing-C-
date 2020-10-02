@@ -165,6 +165,7 @@ const void ProcessingApp::size(int width, int height)
 const void ProcessingApp::background(float v1, float v2, float v3, float alpha)
 {
 	glClearColor(v1, v2, v3, alpha);
+	glClear(GL_COLOR_BUFFER_BIT);
 }
 
 int ProcessingApp::modifiers()
@@ -178,7 +179,7 @@ int ProcessingApp::modifiers()
 	{
 		modifiers |= CTRL;
 	}
-	// No meta support?
+	// TODO meta support?
 	if (glfwGetKey(m_window, GLFW_KEY_LEFT_ALT) || glfwGetKey(m_window, GLFW_KEY_RIGHT_ALT))
 	{
 		modifiers |= ALT;
@@ -202,7 +203,7 @@ void ProcessingApp::keyReleaseListener(GlKeyReleaseEvent* e)
 {
 	keyCode = e->getKey();
 	onKeyReleased();
-	onKeyPressed(KeyEvent(0, modifiers(), key, keyCode));
+	onKeyReleased(KeyEvent(0, modifiers(), key, keyCode));
 }
 
 void ProcessingApp::keyTypeListener(GlKeyTypeEvent* e)
@@ -214,31 +215,41 @@ void ProcessingApp::keyTypeListener(GlKeyTypeEvent* e)
 
 void ProcessingApp::mouseMoveListener(GlMouseMoveEvent* e)
 {
-	onMouseMoved();
-	onMouseMoved(MouseEvent(5, modifiers(), e->getXPos(), e->getYPos(), -1, 0));
 	if (mousePressed)
 	{
 		std::fill(m_click, m_click + GLFW_MOUSE_BUTTON_LAST + 1, false);
 		onMouseDragged();
+		onMouseDragged(MouseEvent(4, modifiers(), e->getXPos(), e->getYPos(), -1, mouseButton));
+	}
+	else
+	{
+		onMouseMoved();
+		onMouseMoved(MouseEvent(5, modifiers(), e->getXPos(), e->getYPos(), -1, 0));
 	}
 }
 
 void ProcessingApp::mouseScrollListener(GlMouseScrollEvent* e)
 {
 	onMouseWheel();
+	onMouseWheel(MouseEvent(8, modifiers(), mouseX, mouseY, mouseButton, e->getYOffset()));
 }
 
 void ProcessingApp::mouseButtonPressListener(GlMouseButtonPressEvent* e)
 {
+	mouseButton = e->getButton();
 	onMousePressed();
+	onMousePressed(MouseEvent(1, modifiers(), mouseX, mouseY, mouseButton, 0));
 	m_click[e->getButton()] = true;
 }
 
 void ProcessingApp::mouseButtonReleaseListener(GlMouseButtonReleaseEvent* e)
 {
+	mouseButton = e->getButton();
 	onMouseReleased();
+	onMouseReleased(MouseEvent(0, modifiers(), mouseX, mouseY, mouseButton, 0));
 	if (m_click[e->getButton()])
 	{
 		onMouseClicked();
+		onMouseClicked(MouseEvent(3, modifiers(), mouseX, mouseY, mouseButton, 0));
 	}
 }

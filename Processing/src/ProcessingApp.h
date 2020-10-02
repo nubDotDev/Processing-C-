@@ -20,8 +20,7 @@
 #define ALT 8
 
 // MouseEvent actions
-#define PRESS 1
-#define RELEASE 2
+// (PRESS and RELEASE are defined under KeyEvent actions)
 #define CLICK  3
 #define DRAG 4
 #define MOVE 5
@@ -56,10 +55,10 @@ public:
 	int getAction() { return action; }
 	virtual int getFlavor() = 0;
 	int getModifiers() { return modifiers; }
-	bool iAltDown() { return modifiers | ALT; }
-	bool isControlDown() { return modifiers | CTRL; }
-	bool isMetaDown() { return modifiers | META; }
-	bool isShiftDown() { return modifiers | SHIFT; }
+	bool isAltDown() { return modifiers & ALT; }
+	bool isControlDown() { return modifiers & CTRL; }
+	bool isMetaDown() { return modifiers & META; }
+	bool isShiftDown() { return modifiers & SHIFT; }
 protected:
 	int action, modifiers;
 };
@@ -96,6 +95,8 @@ public:
 private:
 	int button, count, x, y;
 };
+
+// TODO maybe TouchEvent?
 
 class ProcessingApp
 {
@@ -164,5 +165,3 @@ private:
 
 	GLFWwindow* m_window;
 };
-
-// TODO Maybe TouchEvent?
